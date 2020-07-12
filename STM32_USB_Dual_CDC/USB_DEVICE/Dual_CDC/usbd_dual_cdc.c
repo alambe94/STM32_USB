@@ -42,7 +42,7 @@
   */
 
 /** @defgroup Dual_CDC_CORE
-  * @brief Mass storage core module
+  * @brief Dual CDC core module
   * @{
   */
 
@@ -109,7 +109,7 @@ USBD_ClassTypeDef USBD_Dual_CDC =
         USBD_Dual_CDC_GetDeviceQualifierDescriptor,
 };
 
-/* USB Mass storage device Configuration Descriptor */
+/* USB Dual CDC device Configuration Descriptor */
 /* All Descriptors (Configuration, Interface, Endpoint, Class, Vendor */
 __ALIGN_BEGIN static uint8_t USBD_Dual_CDC_CfgFSDesc[USB_DUAL_CDC_CONFIG_DESC_SIZ] __ALIGN_END =
     {
@@ -324,7 +324,7 @@ __ALIGN_BEGIN static uint8_t USBD_Dual_CDC_DeviceQualifierDesc[USB_LEN_DEV_QUALI
 
 /**
   * @brief  USBD_Dual_CDC_Init
-  *         Initialize  the mass storage configuration
+  *         Initialize  the Dual CDC configuration
   * @param  pdev: device instance
   * @param  cfgidx: configuration index
   * @retval status
@@ -425,7 +425,7 @@ uint8_t USBD_Dual_CDC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
 
 /**
   * @brief  USBD_Dual_CDC_DeInit
-  *         DeInitilaize  the mass storage configuration
+  *         DeInitilaize  the Dual CDC configuration
   * @param  pdev: device instance
   * @param  cfgidx: configuration index
   * @retval status
@@ -485,14 +485,14 @@ uint8_t USBD_Dual_CDC_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
   USBD_StatusTypeDef ret = USBD_OK;
 
   uint8_t cdc_index = 1;
-  USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef *)pdev->pClassDataCDC[cdc_index];
+  USBD_CDC_HandleTypeDef *hcdc;
 
   if (((req->bmRequest & USB_REQ_RECIPIENT_MASK) == USB_REQ_RECIPIENT_INTERFACE && req->wIndex == 0x00) ||
       ((req->bmRequest & USB_REQ_RECIPIENT_MASK) == USB_REQ_RECIPIENT_ENDPOINT && ((req->wIndex & 0x7F) == 0x02)))
   {
     cdc_index = 0;
-    hcdc = (USBD_CDC_HandleTypeDef *)pdev->pClassDataCDC[cdc_index];
   }
+  hcdc = (USBD_CDC_HandleTypeDef *)pdev->pClassDataCDC[cdc_index];
 
   switch (req->bmRequest & USB_REQ_TYPE_MASK)
   {

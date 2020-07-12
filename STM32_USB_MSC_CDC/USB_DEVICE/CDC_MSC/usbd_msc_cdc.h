@@ -26,13 +26,11 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include  "usbd_msc_bot.h"
-#include  "usbd_msc_scsi.h"
 #include  "usbd_ioreq.h"
 
 #define USB_MSC_CDC_CONFIG_DESC_SIZ      98U
 
-/* Structure for MSC process */
+/* Structure for MSC_CDC process */
 extern USBD_ClassTypeDef  USBD_MSC_CDC;
 #define USBD_MSC_CDC_CLASS    &USBD_MSC_CDC
 

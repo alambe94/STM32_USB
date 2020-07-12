@@ -1,8 +1,6 @@
 /**
   ******************************************************************************
   * @file    usbd_msc_cdc.c
-  * @author  MCD Application Team
-  * @brief   This file provides all the MSC core functions.
   *
   * @verbatim
   *
@@ -55,19 +53,19 @@
   * @{
   */
 
-/** @defgroup MSC_CORE
+/** @defgroup MSC_CDC_CORE
   * @brief Mass storage core module
   * @{
   */
 
-/** @defgroup MSC_CORE_Private_TypesDefinitions
+/** @defgroup MSC_CDC_CORE_Private_TypesDefinitions
   * @{
   */
 /**
   * @}
   */
 
-/** @defgroup MSC_CORE_Private_Defines
+/** @defgroup MSC_CDC_CORE_Private_Defines
   * @{
   */
 
@@ -75,14 +73,14 @@
   * @}
   */
 
-/** @defgroup MSC_CORE_Private_Macros
+/** @defgroup MSC_CDC_CORE_Private_Macros
   * @{
   */
 /**
   * @}
   */
 
-/** @defgroup MSC_CORE_Private_FunctionPrototypes
+/** @defgroup MSC_CDC_CORE_Private_FunctionPrototypes
   * @{
   */
 uint8_t USBD_MSC_CDC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
@@ -101,7 +99,7 @@ uint8_t *USBD_MSC_CDC_GetDeviceQualifierDescriptor(uint16_t *length);
   * @}
   */
 
-/** @defgroup MSC_CORE_Private_Variables
+/** @defgroup MSC_CDC_CORE_Private_Variables
   * @{
   */
 
@@ -130,7 +128,6 @@ __ALIGN_BEGIN static uint8_t USBD_MSC_CDC_CfgFSDesc[USB_MSC_CDC_CONFIG_DESC_SIZ]
         0x09,                        /* bLength: Configuation Descriptor size */
         USB_DESC_TYPE_CONFIGURATION, /* bDescriptorType: Configuration */
         USB_MSC_CDC_CONFIG_DESC_SIZ,
-
         0x00,
         0x03, /* bNumInterfaces: 1 interface */
         0x01, /* bConfigurationValue: */
@@ -175,18 +172,18 @@ __ALIGN_BEGIN static uint8_t USBD_MSC_CDC_CfgFSDesc[USB_MSC_CDC_CONFIG_DESC_SIZ]
         0x02, /* bFunctionClass */
         0x02, /* bFunctionSubClass */
         0x01, /* bFunctionProtocol */
-        0x00,  /* iFunction (Index of string descriptor describing this function) */
+        0x00, /* iFunction (Index of string descriptor describing this function) */
 
         /* Interface Descriptor */
         0x09,                    /* bLength: Interface Descriptor size */
         USB_DESC_TYPE_INTERFACE, /* bDescriptorType: Interface */
-        0x01, /* bInterfaceNumber: Number of Interface */
-        0x00, /* bAlternateSetting: Alternate setting */
-        0x01, /* bNumEndpoints: One endpoints used */
-        0x02, /* bInterfaceClass: Communication Interface Class */
-        0x02, /* bInterfaceSubClass: Abstract Control Model */
-        0x01, /* bInterfaceProtocol: Common AT commands */
-        0x00, /* iInterface: */
+        0x01,                    /* bInterfaceNumber: Number of Interface */
+        0x00,                    /* bAlternateSetting: Alternate setting */
+        0x01,                    /* bNumEndpoints: One endpoints used */
+        0x02,                    /* bInterfaceClass: Communication Interface Class */
+        0x02,                    /* bInterfaceSubClass: Abstract Control Model */
+        0x01,                    /* bInterfaceProtocol: Common AT commands */
+        0x00,                    /* iInterface: */
 
         /* Header Functional Descriptor */
         0x05, /* bLength: Endpoint Descriptor size */
@@ -252,8 +249,7 @@ __ALIGN_BEGIN static uint8_t USBD_MSC_CDC_CfgFSDesc[USB_MSC_CDC_CONFIG_DESC_SIZ]
         0x02,                                /* bmAttributes: Bulk */
         LOBYTE(CDC_DATA_FS_MAX_PACKET_SIZE), /* wMaxPacketSize: */
         HIBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),
-        0x00
-};
+        0x00};
 
 /* USB Standard Device Descriptor */
 __ALIGN_BEGIN static uint8_t USBD_MSC_CDC_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC] __ALIGN_END =
@@ -265,7 +261,7 @@ __ALIGN_BEGIN static uint8_t USBD_MSC_CDC_DeviceQualifierDesc[USB_LEN_DEV_QUALIF
         0x00,
         0x00,
         0x00,
-        MSC_MAX_FS_PACKET,
+        0x40,
         0x01,
         0x00,
 };
@@ -273,12 +269,12 @@ __ALIGN_BEGIN static uint8_t USBD_MSC_CDC_DeviceQualifierDesc[USB_LEN_DEV_QUALIF
   * @}
   */
 
-/** @defgroup MSC_CORE_Private_Functions
+/** @defgroup MSC_CDC_CORE_Private_Functions
   * @{
   */
 
 /**
-  * @brief  USBD_MSC_Init
+  * @brief  USBD_MSC_CDC_Init
   *         Initialize  the mass storage configuration
   * @param  pdev: device instance
   * @param  cfgidx: configuration index
@@ -319,7 +315,9 @@ uint8_t USBD_MSC_CDC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
 uint8_t USBD_MSC_CDC_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 {
   /** if interface is msc or endpoint belong to msc*/
-  if ((req->wIndex == 0x00) || (req->wIndex & 0x7F) == 0x01)
+
+  if (((req->bmRequest & USB_REQ_RECIPIENT_MASK) == USB_REQ_RECIPIENT_INTERFACE && req->wIndex == 0x00) ||
+      ((req->bmRequest & USB_REQ_RECIPIENT_MASK) == USB_REQ_RECIPIENT_ENDPOINT && ((req->wIndex & 0x7F) == 0x01)))
   {
     return USBD_MSC_Setup(pdev, req);
   }

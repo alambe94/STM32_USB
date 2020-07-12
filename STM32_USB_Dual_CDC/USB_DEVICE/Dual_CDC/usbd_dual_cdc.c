@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    usbd_Dual_CDC.c
+  * @file    usbd_dual_CDC.c
   *
   * @verbatim
   *
@@ -391,10 +391,10 @@ uint8_t USBD_Dual_CDC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
 
   /* Open Command IN EP */
   (void)USBD_LL_OpenEP(pdev, CDC0_CMD_EP, USBD_EP_TYPE_INTR, CDC_CMD_PACKET_SIZE);
-  (void)USBD_LL_OpenEP(pdev, CDC0_CMD_EP, USBD_EP_TYPE_INTR, CDC_CMD_PACKET_SIZE);
+  (void)USBD_LL_OpenEP(pdev, CDC1_CMD_EP, USBD_EP_TYPE_INTR, CDC_CMD_PACKET_SIZE);
 
   pdev->ep_in[CDC0_CMD_EP & 0xFU].is_used = 1U;
-  pdev->ep_in[CDC0_CMD_EP & 0xFU].is_used = 1U;
+  pdev->ep_in[CDC1_CMD_EP & 0xFU].is_used = 1U;
 
   /* Init  physical Interface components */
   ((USBD_CDC_ItfTypeDef *)pdev->pUserDataCDC)->Init(0);
@@ -488,7 +488,7 @@ uint8_t USBD_Dual_CDC_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
   USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef *)pdev->pClassDataCDC[cdc_index];
 
   if (((req->bmRequest & USB_REQ_RECIPIENT_MASK) == USB_REQ_RECIPIENT_INTERFACE && req->wIndex == 0x00) ||
-      ((req->bmRequest & USB_REQ_RECIPIENT_MASK) == USB_REQ_RECIPIENT_ENDPOINT && ((req->wIndex & 0x7F) == CDC0_CMD_EP)))
+      ((req->bmRequest & USB_REQ_RECIPIENT_MASK) == USB_REQ_RECIPIENT_ENDPOINT && ((req->wIndex & 0x7F) == 0x02)))
   {
     cdc_index = 0;
     hcdc = (USBD_CDC_HandleTypeDef *)pdev->pClassDataCDC[cdc_index];
@@ -671,7 +671,7 @@ uint8_t USBD_Dual_CDC_EP0_RxReady(USBD_HandleTypeDef *pdev)
 
     if ((hcdc1->CmdOpCode != 0xFFU))
     {
-      ((USBD_CDC_ItfTypeDef *)pdev->pUserDataCDC)->Control(1, hcdc0->CmdOpCode, (uint8_t *)hcdc1->data, (uint16_t)hcdc0->CmdLength);
+      ((USBD_CDC_ItfTypeDef *)pdev->pUserDataCDC)->Control(1, hcdc1->CmdOpCode, (uint8_t *)hcdc1->data, (uint16_t)hcdc1->CmdLength);
       hcdc1->CmdOpCode = 0xFFU;
     }
   }

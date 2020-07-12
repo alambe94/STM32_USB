@@ -45,6 +45,9 @@
 
 /* USER CODE BEGIN PV */
 
+uint8_t CDC_RX_Buffer[2][32];
+volatile uint8_t CDC_RX_Count[2];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -57,6 +60,15 @@ static void MX_GPIO_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void CDC_Receive_FS_ISR(uint8_t cdc_index, uint8_t *buff, uint32_t len)
+{
+	CDC_RX_Count[cdc_index] = len;
+
+    for(uint16_t i=0; i<len; i++)
+    {
+    	CDC_RX_Buffer[cdc_index][i] = *buff++;
+    }
+}
 /* USER CODE END 0 */
 
 /**
@@ -97,6 +109,18 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
+  /** echo cdc0 */
+  if(CDC_RX_Count[0])
+  {
+	  CDC_Transmit_FS(0, CDC_RX_Buffer[0], CDC_RX_Count[0]);
+  }
+
+  /** echo cdc1 */
+  if(CDC_RX_Count[1])
+  {
+	  CDC_Transmit_FS(1, CDC_RX_Buffer[1], CDC_RX_Count[1]);
+  }
 
   CDC_Transmit_FS(0, (uint8_t*)"STM32 USB Composite CDC0\n", 25);
   CDC_Transmit_FS(1, (uint8_t*)"STM32 USB Composite CDC1\n", 25);

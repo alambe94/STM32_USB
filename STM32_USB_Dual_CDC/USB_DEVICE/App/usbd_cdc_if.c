@@ -66,7 +66,7 @@
 /* Define size for the receive and transmit buffer over CDC */
 /* It's up to user to redefine and/or remove those define */
 #define APP_RX_DATA_SIZE 2048
-#define APP_TX_DATA_SIZE 2048
+#define APP_TX_DATA_SIZE 1
 /* USER CODE END PRIVATE_DEFINES */
 
 /**
@@ -266,11 +266,10 @@ static int8_t CDC_Control_FS(uint8_t cdc_index, uint8_t cmd, uint8_t *pbuf, uint
 static int8_t CDC_Receive_FS(uint8_t cdc_index, uint8_t *Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
-  USBD_CDC_SetRxBuffer(cdc_index, &hUsbDeviceFS, &Buf[0]);
-
   extern void CDC_Receive_FS_ISR(uint8_t rb_index, uint8_t *buff, uint32_t len);
   CDC_Receive_FS_ISR(cdc_index, Buf, *Len);
 
+  USBD_CDC_SetRxBuffer(cdc_index, &hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(cdc_index, &hUsbDeviceFS);
   return (USBD_OK);
   /* USER CODE END 6 */

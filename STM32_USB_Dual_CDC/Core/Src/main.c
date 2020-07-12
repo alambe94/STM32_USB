@@ -114,12 +114,14 @@ int main(void)
   if(CDC_RX_Count[0])
   {
 	  CDC_Transmit_FS(0, CDC_RX_Buffer[0], CDC_RX_Count[0]);
+	  CDC_RX_Count[0] = 0;
   }
 
   /** echo cdc1 */
   if(CDC_RX_Count[1])
   {
 	  CDC_Transmit_FS(1, CDC_RX_Buffer[1], CDC_RX_Count[1]);
+	  CDC_RX_Count[1] = 0;
   }
 
   CDC_Transmit_FS(0, (uint8_t*)"STM32 USB Composite CDC0\n", 25);

@@ -32,8 +32,6 @@ extern "C" {
 
 /* Structure for MSC_CDC process */
 extern USBD_ClassTypeDef  USBD_MSC_CDC;
-#define USBD_MSC_CDC_CLASS    &USBD_MSC_CDC
-
 /**
   * @}
   */

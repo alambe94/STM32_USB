@@ -487,8 +487,7 @@ uint8_t USBD_Dual_CDC_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
   uint8_t cdc_index = 1;
   USBD_CDC_HandleTypeDef *hcdc;
 
-  if (((req->bmRequest & USB_REQ_RECIPIENT_MASK) == USB_REQ_RECIPIENT_INTERFACE && req->wIndex == 0x00) ||
-      ((req->bmRequest & USB_REQ_RECIPIENT_MASK) == USB_REQ_RECIPIENT_ENDPOINT && ((req->wIndex & 0x7F) == 0x02)))
+  if (req->wIndex == 0x00)
   {
     cdc_index = 0;
   }

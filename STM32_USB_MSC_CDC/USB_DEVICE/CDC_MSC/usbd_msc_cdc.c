@@ -314,10 +314,8 @@ uint8_t USBD_MSC_CDC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
 */
 uint8_t USBD_MSC_CDC_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 {
-  /** if interface is msc or endpoint belong to msc*/
-
-  if (((req->bmRequest & USB_REQ_RECIPIENT_MASK) == USB_REQ_RECIPIENT_INTERFACE && req->wIndex == 0x00) ||
-      ((req->bmRequest & USB_REQ_RECIPIENT_MASK) == USB_REQ_RECIPIENT_ENDPOINT && ((req->wIndex & 0x7F) == 0x01)))
+  /** if interface is msc */
+  if (req->wIndex == 0x00)
   {
     return USBD_MSC_Setup(pdev, req);
   }
@@ -355,7 +353,7 @@ uint8_t USBD_MSC_CDC_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum)
   {
     return USBD_MSC_DataOut(pdev, epnum);
   }
-  return USBD_MSC_DataOut(pdev, epnum);
+  return USBD_CDC_DataOut(pdev, epnum);
 }
 
 /**

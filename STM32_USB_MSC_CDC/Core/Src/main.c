@@ -45,6 +45,9 @@
 
 /* USER CODE BEGIN PV */
 
+uint8_t CDC_RX_Buffer[32];
+volatile uint8_t CDC_RX_Count;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,6 +59,16 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+void CDC_Receive_FS_ISR(uint8_t *buff, uint32_t len)
+{
+	CDC_RX_Count = len;
+
+    for(uint16_t i=0; i<len; i++)
+    {
+    	CDC_RX_Buffer[i] = *buff++;
+    }
+}
 
 /* USER CODE END 0 */
 
@@ -98,7 +111,17 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-  CDC_Transmit_FS((uint8_t*)"STM32 USB Composite MSC+CDC\n", 28);
+  /** echo cdc */
+  if(CDC_RX_Count)
+  {
+	  CDC_Transmit_FS(CDC_RX_Buffer, CDC_RX_Count);
+	  CDC_RX_Count = 0;
+  }
+  else
+  {
+	  CDC_Transmit_FS((uint8_t*)"STM32 USB Composite MSC+CDC\n", 28);
+  }
+
   HAL_Delay(1000);
 
     /* USER CODE BEGIN 3 */

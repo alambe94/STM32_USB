@@ -29,9 +29,7 @@
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void Send_Audio_to_USB(int16_t * audioData, uint16_t PCMSamples);
-
-
+extern USBD_AUDIO_ItfTypeDef USBD_AUDIO_fops;
 #endif /* __USBD_AUDIO_IF_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -12,10 +12,12 @@
 #define AUDIO_IN_PDM_FREQ              (AUDIO_IN_SAMPLING_FREQ*AUDIO_IN_PDM_DECIMATION_FACTOR*AUDIO_IN_CHANNELS)
 #define AUDIO_IN_PCM_SAMPLES_RB_SIZE   32
 
+void Check_PDM();
 uint8_t PCM_Pool_Is_Full();
 uint8_t PCM_Pool_Is_Empty();
 uint8_t PCM_Pool_Get_Count();
 uint16_t *PCM_Pool_Next_Read();
 uint16_t *PCM_Pool_Next_Write();
+uint16_t *PDM_Get_Buffer();
 
 #endif /* INC_PCM_BUFFER_POOL_H_ */

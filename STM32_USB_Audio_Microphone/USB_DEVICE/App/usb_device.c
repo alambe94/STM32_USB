@@ -28,7 +28,7 @@
 #include "usbd_audio_if.h"
 
 /* USER CODE BEGIN Includes */
-#include "stm32f4_discovery_audio.h"
+#include "pcm_buffer_pool.h"
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN PV */
@@ -43,7 +43,6 @@
 
 /* USB Device Core handle declaration. */
 USBD_HandleTypeDef hUsbDeviceFS;
-extern USBD_AUDIO_ItfTypeDef  USBD_AUDIO_fops;
 
 /*
  * -- Insert your variables declaration here --
@@ -68,12 +67,12 @@ void MX_USB_DEVICE_Init(void)
   /* USER CODE BEGIN USB_DEVICE_Init_PreTreatment */
 
   /* Initialize USB descriptor basing on channels number and sampling frequency */
-  USBD_AUDIO_Init_Microphone_Descriptor(&hUsbDeviceFS, DEFAULT_AUDIO_IN_FREQ, DEFAULT_AUDIO_IN_CHANNEL_NBR);
+  USBD_AUDIO_Init_Microphone_Descriptor(&hUsbDeviceFS, AUDIO_IN_SAMPLING_FREQ, AUDIO_IN_CHANNELS);
   
   /* USER CODE END USB_DEVICE_Init_PreTreatment */
   
   /* Init Device Library, add supported class and start the library. */
-  if (USBD_Init(&hUsbDeviceFS, &AUDIO_Desc, DEVICE_FS) != USBD_OK)
+  if (USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS) != USBD_OK)
   {
     Error_Handler();
   }

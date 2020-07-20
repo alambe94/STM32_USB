@@ -21,7 +21,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_audio_if.h"
-#include "stm32f4_discovery_audio.h"
+#include "pcm_buffer_pool.h"
+#include "i2s.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -51,9 +52,6 @@ USBD_AUDIO_ItfTypeDef USBD_AUDIO_fops = {
   Audio_CommandMgr,
 };
 
-extern uint16_t PDM_Buffer[];
-
-
 /* Private functions ---------------------------------------------------------*/
 /* This table maps the audio device class setting in 1/256 dB to a
 * linear 0-64 scaling used in pdm_filter.c. It is computed as
@@ -79,7 +77,7 @@ const int16_t vol_table[65] =
 */
 static int8_t Audio_Init(uint32_t  AudioFreq, uint32_t BitRes, uint32_t ChnlNbr)
 {
-  return BSP_AUDIO_IN_Init(48000, 16, 1);
+  return USBD_OK;
 }
 
 /**
@@ -89,7 +87,7 @@ static int8_t Audio_Init(uint32_t  AudioFreq, uint32_t BitRes, uint32_t ChnlNbr)
 */
 static int8_t Audio_DeInit(uint32_t options)
 {
-  return AUDIO_OK;
+	return USBD_OK;
 }
 
 /**
@@ -98,7 +96,8 @@ static int8_t Audio_DeInit(uint32_t options)
 */
 static int8_t Audio_Record(void)
 {
-  return BSP_AUDIO_IN_Record(PDM_Buffer, 48*64/16);;
+	HAL_I2S_Receive_DMA(&hi2s2, PDM_Get_Buffer(), AUDIO_IN_PCM_SAMPLES_IN_MS*AUDIO_IN_PDM_DECIMATION_FACTOR/16);
+	return USBD_OK;
 }
 
 /**
@@ -116,8 +115,8 @@ static int8_t Audio_VolumeCtl(int16_t Volume)
 	{
 		j++;
 	}
-  /* Now do the volume adjustment */
-  return BSP_AUDIO_IN_SetVolume(j);
+  /** TODO */
+  return USBD_OK;
 }
 
 /**
@@ -127,7 +126,7 @@ static int8_t Audio_VolumeCtl(int16_t Volume)
 */
 static int8_t Audio_MuteCtl(uint8_t cmd)
 {
-  return AUDIO_OK;
+  return USBD_OK;
 }
 
 
@@ -138,7 +137,7 @@ static int8_t Audio_MuteCtl(uint8_t cmd)
 */
 static int8_t Audio_Stop(void)
 {  
-  return BSP_AUDIO_IN_Stop();
+  return USBD_OK;
 }
 
 /**
@@ -149,7 +148,7 @@ static int8_t Audio_Stop(void)
 
 static int8_t Audio_Pause(void)
 {
-  return AUDIO_OK;
+  return USBD_OK;
 }
 
 
@@ -160,7 +159,7 @@ static int8_t Audio_Pause(void)
 */
 static int8_t Audio_Resume(void)
 {  
-  return BSP_AUDIO_IN_Resume();
+  return USBD_OK;
 }
 
 /**
@@ -171,7 +170,7 @@ static int8_t Audio_Resume(void)
 
 static int8_t Audio_CommandMgr(uint8_t cmd)
 {
-  return AUDIO_OK;
+  return USBD_OK;
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

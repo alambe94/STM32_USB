@@ -32,7 +32,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stm32f4_discovery_audio.h"
 #include "usbd_audio_if.h"
 #include "pcm_buffer_pool.h"
 #include "math.h"
@@ -56,10 +55,7 @@
 
 /* USER CODE BEGIN PV */
 int16_t Sine_Wave[48];
-
-uint16_t PDM_Buffer[AUDIO_IN_PCM_SAMPLES_IN_MS*AUDIO_IN_PDM_DECIMATION_FACTOR/16];
-uint8_t PDM_Ready = 0;
-
+extern uint8_t PDM_Ready_Flag;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,23 +98,15 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  //MX_I2C1_Init();
-  //MX_I2S3_Init();
-  //MX_SPI1_Init();
-  //MX_I2S2_Init();
+  MX_I2C1_Init();
+  MX_I2S3_Init();
+  MX_SPI1_Init();
+  MX_I2S2_Init();
   MX_USB_DEVICE_Init();
   MX_USART2_UART_Init();
   MX_CRC_Init();
   MX_PDM2PCM_Init();
   /* USER CODE BEGIN 2 */
-
-  BSP_LED_Init(LED3);
-  BSP_LED_Init(LED4);
-  BSP_LED_Init(LED5);
-  BSP_LED_Init(LED6);
-  BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_EXTI);
-
-  BSP_LED_On(LED4);
 
 	for(uint16_t i=0; i<48; i++)
 	{
@@ -130,18 +118,11 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-
   {
+	  Check_PDM();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-	if(PDM_Ready)
-	{
-		PDM_Ready = 0;
-		PDM_Filter(PDM_Buffer, PCM_Pool_Next_Write(), &PDM1_filter_handler);
-	}
-
   }
   /* USER CODE END 3 */
 }
@@ -197,18 +178,34 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void BSP_AUDIO_OUT_TransferComplete_CallBack(void)
+void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
 {
+	if(hi2s == &hi2s3)
+	{
 
+	}
+}
+void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
+{
+	if(hi2s == &hi2s3)
+	{
+
+	}
 }
 
-void BSP_AUDIO_IN_TransferComplete_CallBack(void)
+void HAL_I2S_RxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
 {
-	PDM_Ready = 1;
-}
+	if(hi2s == &hi2s2)
+	{
 
-void BSP_AUDIO_IN_HalfTransfer_CallBack(void)
+	}
+}
+void HAL_I2S_RxCpltCallback(I2S_HandleTypeDef *hi2s)
 {
+	if(hi2s == &hi2s2)
+	{
+		PDM_Ready_Flag = 1;
+	}
 }
 /* USER CODE END 4 */
 

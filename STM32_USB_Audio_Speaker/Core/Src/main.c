@@ -123,7 +123,7 @@ int main(void)
    cs43l22_Play(CS43L22_I2C_ADDRESS, 0, 0);
 
    /** first time send dummy bytes */
-   HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t*)CS43L22_Buffer, AUDIO_OUT_PCM_SAMPLES_IN_MS);
+   HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t*)CS43L22_Buffer, AUDIO_OUT_PCM_SAMPLES);
 
   /* USER CODE END 2 */
 

@@ -35,7 +35,7 @@ uint8_t PCM_Pool_Get_Count()
 }
 
 /** return pointer to next filled buffer */
-uint16_t *PCM_Pool_Next_Read()
+uint16_t *PCM_Pool_Next_Filled()
 {
 	if(PCM_Pool_Is_Empty())
 	{
@@ -51,7 +51,7 @@ uint16_t *PCM_Pool_Next_Read()
 }
 
 /** return pointer to next empty buffer */
-uint16_t *PCM_Pool_Next_Write()
+uint16_t *PCM_Pool_Next_Empty()
 {
 	if(PCM_Pool_Is_Full())
 	{
@@ -78,6 +78,6 @@ void Check_PDM()
 	if(PDM_Ready_Flag)
 	{
 		PDM_Ready_Flag = 0;
-		PDM_Filter(PDM_Buffer, PCM_Pool_Next_Write(), &PDM1_filter_handler);
+		PDM_Filter(PDM_Buffer, PCM_Pool_Next_Empty(), &PDM1_filter_handler);
 	}
 }

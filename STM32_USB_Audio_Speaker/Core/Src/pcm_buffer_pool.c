@@ -4,9 +4,9 @@
 #include "cs43l22.h"
 #include "i2s.h"
 
-#define PCM_POOL_SIZE 100
+#define PCM_POOL_SIZE 200
 
-static uint16_t PCM_Buffer_Pool[PCM_POOL_SIZE][AUDIO_OUT_PCM_SAMPLES_IN_MS];
+static uint16_t PCM_Buffer_Pool[PCM_POOL_SIZE][AUDIO_OUT_PCM_SAMPLES];
 
 static uint8_t PCM_Read_Index;
 static uint8_t PCM_Write_Index;
@@ -16,7 +16,7 @@ uint8_t CS43L22_CMPLT_Flag = 0;
 
 uint8_t Ping_Flag = 0;
 uint8_t Pong_Flag = 0;
-uint16_t CS43L22_Buffer[AUDIO_OUT_PCM_SAMPLES_IN_MS];
+uint16_t CS43L22_Buffer[AUDIO_OUT_PCM_SAMPLES];
 
 extern int16_t Sine_Wave[];
 
@@ -97,14 +97,18 @@ void App_Loop()
 		if(Ping_Flag)
 		{
 			Ping_Flag = 0;
-			memcpy(CS43L22_Buffer, data, AUDIO_OUT_PCM_SAMPLES_IN_MS/2);
+			for(uint16_t i=0; i<AUDIO_OUT_PCM_SAMPLES/2; i++)
+			{
+				CS43L22_Buffer[i] = data[i];
+			}
 		}
 		if(Pong_Flag)
 		{
 			Pong_Flag = 0;
-			memcpy(CS43L22_Buffer + AUDIO_OUT_PCM_SAMPLES_IN_MS/2,
-				   data + AUDIO_OUT_PCM_SAMPLES_IN_MS/2,
-				   AUDIO_OUT_PCM_SAMPLES_IN_MS/2);
+			for(uint16_t i=0; i<AUDIO_OUT_PCM_SAMPLES/2; i++)
+			{
+				CS43L22_Buffer[i+AUDIO_OUT_PCM_SAMPLES/2] = data[i+AUDIO_OUT_PCM_SAMPLES/2];
+			}
 
 			PCM_Pool_Next_Filled();
 		}

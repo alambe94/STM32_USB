@@ -239,17 +239,6 @@ static int8_t AUDIO_PeriodicTC_FS(uint8_t *pbuf, uint32_t size, uint8_t cmd)
   UNUSED(pbuf);
   UNUSED(size);
   UNUSED(cmd);
-
-//  uint16_t *dst = PCM_Pool_Next_Empty();
-//  uint16_t *src = (uint16_t*)pbuf;
-//
-//  for(uint16_t i=0; i<size/2; i++)
-//  {
-//	dst[i] = src[i];
-//  }
-
-  memcpy(PCM_Pool_Next_Empty(), pbuf, size);
-
   return (USBD_OK);
   /* USER CODE END 5 */
 }

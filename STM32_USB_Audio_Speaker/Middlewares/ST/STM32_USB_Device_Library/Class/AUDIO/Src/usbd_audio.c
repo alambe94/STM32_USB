@@ -63,6 +63,8 @@ EndBSPDependencies */
 #include "usbd_audio.h"
 #include "usbd_ctlreq.h"
 
+#include "pcm_buffer_pool.h"
+
 
 /** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
@@ -707,48 +709,11 @@ static uint8_t USBD_AUDIO_IsoOutIncomplete(USBD_HandleTypeDef *pdev, uint8_t epn
   */
 static uint8_t USBD_AUDIO_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum)
 {
-  uint16_t PacketSize;
-  USBD_AUDIO_HandleTypeDef *haudio;
-
-  haudio = (USBD_AUDIO_HandleTypeDef *)pdev->pClassData;
-
   if (epnum == AUDIO_OUT_EP)
   {
-    /* Get received data packet length */
-    PacketSize = (uint16_t)USBD_LL_GetRxDataSize(pdev, epnum);
-
-    /* Packet received Callback */
-    ((USBD_AUDIO_ItfTypeDef *)pdev->pUserData)->PeriodicTC(&haudio->buffer[haudio->wr_ptr],
-                                                           PacketSize, AUDIO_OUT_TC);
-
-    /* Increment the Buffer pointer or roll it back when all buffers are full */
-    haudio->wr_ptr += PacketSize;
-
-    if (haudio->wr_ptr == AUDIO_TOTAL_BUF_SIZE)
-    {
-      /* All buffers are full: roll back */
-      haudio->wr_ptr = 0U;
-
-      if (haudio->offset == AUDIO_OFFSET_UNKNOWN)
-      {
-        ((USBD_AUDIO_ItfTypeDef *)pdev->pUserData)->AudioCmd(&haudio->buffer[0],
-                                                             AUDIO_TOTAL_BUF_SIZE / 2U,
-                                                             AUDIO_CMD_START);
-        haudio->offset = AUDIO_OFFSET_NONE;
-      }
-    }
-
-    if (haudio->rd_enable == 0U)
-    {
-      if (haudio->wr_ptr == (AUDIO_TOTAL_BUF_SIZE / 2U))
-      {
-        haudio->rd_enable = 1U;
-      }
-    }
-
     /* Prepare Out endpoint to receive next audio packet */
     (void)USBD_LL_PrepareReceive(pdev, AUDIO_OUT_EP,
-                                 &haudio->buffer[haudio->wr_ptr],
+                                 (uint8_t*)PCM_Pool_Next_Empty(),
                                  AUDIO_OUT_PACKET);
   }
 

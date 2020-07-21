@@ -16,8 +16,8 @@ void Check_PDM();
 uint8_t PCM_Pool_Is_Full();
 uint8_t PCM_Pool_Is_Empty();
 uint8_t PCM_Pool_Get_Count();
-uint16_t *PCM_Pool_Next_Read();
-uint16_t *PCM_Pool_Next_Write();
+uint16_t *PCM_Pool_Next_Filled();
+uint16_t *PCM_Pool_Next_Empty();
 uint16_t *PDM_Get_Buffer();
 
 #endif /* INC_PCM_BUFFER_POOL_H_ */

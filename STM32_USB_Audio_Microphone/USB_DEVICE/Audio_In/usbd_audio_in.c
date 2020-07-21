@@ -373,7 +373,7 @@ static uint8_t USBD_AUDIO_DataIn (USBD_HandleTypeDef *pdev,
     if (PCM_Pool_Get_Count())
     {
       USBD_LL_Transmit(pdev, AUDIO_IN_EP,
-                       (uint8_t *)PCM_Pool_Next_Read(),
+                       (uint8_t *)PCM_Pool_Next_Filled(),
 					   AUDIO_IN_PCM_SAMPLES_IN_MS*2);
     }
     else

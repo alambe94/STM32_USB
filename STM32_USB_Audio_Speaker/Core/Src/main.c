@@ -54,8 +54,13 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
 int16_t Sine_Wave[96];
-extern uint8_t CS43L22_CMPLT_Flag;
+
+extern uint16_t CS43L22_Buffer[];
+extern uint8_t Ping_Flag;
+extern uint8_t Pong_Flag;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -118,7 +123,7 @@ int main(void)
    cs43l22_Play(CS43L22_I2C_ADDRESS, 0, 0);
 
    /** first time send dummy bytes */
-   HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t*)Sine_Wave, 96);
+   HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t*)CS43L22_Buffer, AUDIO_OUT_PCM_SAMPLES_IN_MS);
 
   /* USER CODE END 2 */
 
@@ -189,14 +194,14 @@ void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
 {
 	if(hi2s == &hi2s3)
 	{
-		CS43L22_CMPLT_Flag = 1;
+		Pong_Flag = 1;
 	}
 }
 void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
 {
 	if(hi2s == &hi2s3)
 	{
-
+		Ping_Flag = 1;
 	}
 }
 

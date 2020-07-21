@@ -4,20 +4,16 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define AUDIO_IN_SAMPLING_FREQ         48000
-#define AUDIO_IN_BIT_RESOLUTION        16
-#define AUDIO_IN_PDM_DECIMATION_FACTOR 64
-#define AUDIO_IN_CHANNELS              1
-#define AUDIO_IN_PCM_SAMPLES_IN_MS     (AUDIO_IN_SAMPLING_FREQ/1000)
-#define AUDIO_IN_PDM_FREQ              (AUDIO_IN_SAMPLING_FREQ*AUDIO_IN_PDM_DECIMATION_FACTOR*AUDIO_IN_CHANNELS)
-#define AUDIO_IN_PCM_SAMPLES_RB_SIZE   32
+#define AUDIO_OUT_SAMPLING_FREQ        48000
+#define AUDIO_OUT_BIT_RESOLUTION       16
+#define AUDIO_OUT_CHANNELS             2
+#define AUDIO_OUT_PCM_SAMPLES_IN_MS    (2*AUDIO_OUT_CHANNELS*AUDIO_OUT_SAMPLING_FREQ/1000)
 
-void Check_PDM();
+void App_Loop();
 uint8_t PCM_Pool_Is_Full();
 uint8_t PCM_Pool_Is_Empty();
 uint8_t PCM_Pool_Get_Count();
-uint16_t *PCM_Pool_Next_Read();
-uint16_t *PCM_Pool_Next_Write();
-uint16_t *PDM_Get_Buffer();
+uint16_t *PCM_Pool_Next_Filled();
+uint16_t *PCM_Pool_Next_Empty();
 
 #endif /* INC_PCM_BUFFER_POOL_H_ */

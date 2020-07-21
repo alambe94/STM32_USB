@@ -1,12 +1,18 @@
 #include "pcm_buffer_pool.h"
+#include "cs43l22.h"
+#include "i2s.h"
 
-#define PCM_POOL_SIZE 10
+#define PCM_POOL_SIZE 80
 
-static uint16_t PCM_Buffer_Pool[PCM_POOL_SIZE][AUDIO_IN_PCM_SAMPLES_IN_MS];
+static uint16_t PCM_Buffer_Pool[PCM_POOL_SIZE][AUDIO_OUT_PCM_SAMPLES_IN_MS];
 
 static uint8_t PCM_Read_Index;
 static uint8_t PCM_Write_Index;
 static uint8_t PCM_Full_Flag;
+
+uint8_t CS43L22_CMPLT_Flag = 0;
+
+extern int16_t Sine_Wave[];
 
 /** return 1 if entire pool is full*/
 uint8_t PCM_Pool_Is_Full()
@@ -31,7 +37,7 @@ uint8_t PCM_Pool_Get_Count()
 }
 
 /** return pointer to next filled buffer */
-uint16_t *PCM_Pool_Next_Read()
+uint16_t *PCM_Pool_Next_Filled()
 {
 	if(PCM_Pool_Is_Empty())
 	{
@@ -47,7 +53,7 @@ uint16_t *PCM_Pool_Next_Read()
 }
 
 /** return pointer to next empty buffer */
-uint16_t *PCM_Pool_Next_Write()
+uint16_t *PCM_Pool_Next_Empty()
 {
 	if(PCM_Pool_Is_Full())
 	{
@@ -64,7 +70,18 @@ uint16_t *PCM_Pool_Next_Write()
 	return temp;
 }
 
-void Check_PDM()
+void App_Loop()
 {
-
+	if(CS43L22_CMPLT_Flag)
+	{
+		if(PCM_Pool_Get_Count())
+		{
+			CS43L22_CMPLT_Flag = 0;
+			HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t*)PCM_Pool_Next_Filled(), AUDIO_OUT_PCM_SAMPLES_IN_MS);
+		}
+		else
+		{
+			//cs43l22_Pause(CS43L22_I2C_ADDRESS);
+		}
+	}
 }

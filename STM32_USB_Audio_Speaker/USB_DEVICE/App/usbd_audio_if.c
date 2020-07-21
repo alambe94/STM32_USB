@@ -23,7 +23,8 @@
 #include "usbd_audio_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#include "pcm_buffer_pool.h"
+#include "cs43l22.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -208,6 +209,7 @@ static int8_t AUDIO_VolumeCtl_FS(uint8_t vol)
 {
   /* USER CODE BEGIN 3 */
   UNUSED(vol);
+  cs43l22_SetVolume(CS43L22_I2C_ADDRESS, vol);
   return (USBD_OK);
   /* USER CODE END 3 */
 }
@@ -221,6 +223,7 @@ static int8_t AUDIO_MuteCtl_FS(uint8_t cmd)
 {
   /* USER CODE BEGIN 4 */
   UNUSED(cmd);
+  cs43l22_SetMute(CS43L22_I2C_ADDRESS, cmd);
   return (USBD_OK);
   /* USER CODE END 4 */
 }
@@ -236,6 +239,17 @@ static int8_t AUDIO_PeriodicTC_FS(uint8_t *pbuf, uint32_t size, uint8_t cmd)
   UNUSED(pbuf);
   UNUSED(size);
   UNUSED(cmd);
+
+//  uint16_t *dst = PCM_Pool_Next_Empty();
+//  uint16_t *src = (uint16_t*)pbuf;
+//
+//  for(uint16_t i=0; i<size/2; i++)
+//  {
+//	dst[i] = src[i];
+//  }
+
+  memcpy(PCM_Pool_Next_Empty(), pbuf, size);
+
   return (USBD_OK);
   /* USER CODE END 5 */
 }

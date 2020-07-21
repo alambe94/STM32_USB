@@ -33,6 +33,7 @@
 /* USER CODE BEGIN Includes */
 #include "usbd_audio_if.h"
 #include "pcm_buffer_pool.h"
+#include "cs43l22.h"
 #include "math.h"
 /* USER CODE END Includes */
 
@@ -53,8 +54,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-int16_t Sine_Wave[48];
-extern uint8_t PDM_Ready_Flag;
+int16_t Sine_Wave[96];
+extern uint8_t CS43L22_CMPLT_Flag;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -108,8 +109,16 @@ int main(void)
 
 	for(uint16_t i=0; i<48; i++)
 	{
-		Sine_Wave[i] =  0xFFFF*sinf(i*2*3.1416f*1000.0f/48000.0f)/2;
+		Sine_Wave[i*2] =  0xFFFF*sinf(i*2*3.1416f*1000.0f/48000.0f);
+		Sine_Wave[i*2+1] = Sine_Wave[i*2];
 	}
+
+   cs43l22_Init(CS43L22_I2C_ADDRESS, OUTPUT_DEVICE_HEADPHONE, 70, AUDIO_OUT_SAMPLING_FREQ);
+
+   cs43l22_Play(CS43L22_I2C_ADDRESS, 0, 0);
+
+   /** first time send dummy bytes */
+   HAL_I2S_Transmit_DMA(&hi2s3, (uint16_t*)Sine_Wave, 96);
 
   /* USER CODE END 2 */
 
@@ -117,7 +126,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  Check_PDM();
+	  App_Loop();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -180,7 +189,7 @@ void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
 {
 	if(hi2s == &hi2s3)
 	{
-
+		CS43L22_CMPLT_Flag = 1;
 	}
 }
 void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)

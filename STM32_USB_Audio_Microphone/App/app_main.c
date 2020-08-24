@@ -116,7 +116,7 @@ void HAL_I2S_RxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
     if (hi2s == &hi2s2)
     {
         PDM_Filter(PDM_Buffer, &PCM_Buffer[PCM_Write_Index], &PDM1_filter_handler);
-        PCM_Write_Index += AUDIO_IN_PCM_SAMPLES_IN_MS;
+        PCM_Write_Index += AUDIO_IN_PCM_SAMPLES_IN_MS/2;
         if (PCM_Write_Index >= AUDIO_IN_PCM_BUFFER_SIZE)
         {
             PCM_Write_Index = 0;
@@ -136,7 +136,7 @@ void HAL_I2S_RxCpltCallback(I2S_HandleTypeDef *hi2s)
     if (hi2s == &hi2s2)
     {
         PDM_Filter(PDM_Buffer, &PCM_Buffer[PCM_Write_Index], &PDM1_filter_handler);
-        PCM_Write_Index += AUDIO_IN_PCM_SAMPLES_IN_MS;
+        PCM_Write_Index += AUDIO_IN_PCM_SAMPLES_IN_MS/2;
         if (PCM_Write_Index >= AUDIO_IN_PCM_BUFFER_SIZE)
         {
             PCM_Write_Index = 0;

@@ -29,7 +29,7 @@
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-extern USBD_AUDIO_ItfTypeDef USBD_AUDIO_fops;
+extern USBD_AUDIO_ItfTypeDef USBD_AUDIO_fops_FS;
 #endif /* __USBD_AUDIO_IF_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

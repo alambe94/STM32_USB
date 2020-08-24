@@ -1,0 +1,24 @@
+#ifndef AUDIO_IN_H_
+#define AUDIO_IN_H_
+
+#define AUDIO_IN_SAMPLING_FREQ 48000
+#define AUDIO_IN_PDM_DECIMATION_FACTOR 64
+#define AUDIO_IN_CHANNELS 1
+#define AUDIO_IN_PCM_SAMPLES_IN_MS (AUDIO_IN_SAMPLING_FREQ / 1000)
+#define AUDIO_IN_PDM_FREQ (AUDIO_IN_SAMPLING_FREQ * AUDIO_IN_PDM_DECIMATION_FACTOR * AUDIO_IN_CHANNELS)
+
+#define AUDIO_IN_PCM_BUFFER_SIZE (AUDIO_IN_PCM_SAMPLES_IN_MS * 20)
+#define AUDIO_IN_PDM_BUFFER_SIZE (AUDIO_IN_PCM_SAMPLES_IN_MS * AUDIO_IN_PDM_DECIMATION_FACTOR / 16)
+
+extern uint16_t PDM_Buffer[];
+
+extern uint16_t PCM_Buffer[];
+
+extern volatile uint32_t PCM_Read_Index_USB;
+extern volatile uint32_t PCM_Write_Index;
+
+uint32_t PCM_Get_Count_USB(void);
+uint32_t PCM_Get_Count_SPKR(void);
+
+
+#endif /* AUDIO_IN_H_ */

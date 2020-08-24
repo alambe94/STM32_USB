@@ -28,7 +28,7 @@
 #include "usbd_audio_if.h"
 
 /* USER CODE BEGIN Includes */
-#include "pcm_buffer_pool.h"
+#include "app_main.h"
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN PV */
@@ -70,7 +70,7 @@ void MX_USB_DEVICE_Init(void)
   USBD_AUDIO_Init_Microphone_Descriptor(&hUsbDeviceFS, AUDIO_IN_SAMPLING_FREQ, AUDIO_IN_CHANNELS);
   
   /* USER CODE END USB_DEVICE_Init_PreTreatment */
-  
+
   /* Init Device Library, add supported class and start the library. */
   if (USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS) != USBD_OK)
   {
@@ -80,7 +80,7 @@ void MX_USB_DEVICE_Init(void)
   {
     Error_Handler();
   }
-  if (USBD_AUDIO_RegisterInterface(&hUsbDeviceFS, &USBD_AUDIO_fops) != USBD_OK)
+  if (USBD_AUDIO_RegisterInterface(&hUsbDeviceFS, &USBD_AUDIO_fops_FS) != USBD_OK)
   {
     Error_Handler();
   }

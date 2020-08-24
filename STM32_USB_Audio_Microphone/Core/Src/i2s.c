@@ -57,7 +57,7 @@ void MX_I2S3_Init(void)
   hi2s3.Init.Standard = I2S_STANDARD_PHILIPS;
   hi2s3.Init.DataFormat = I2S_DATAFORMAT_16B;
   hi2s3.Init.MCLKOutput = I2S_MCLKOUTPUT_ENABLE;
-  hi2s3.Init.AudioFreq = I2S_AUDIOFREQ_48K;
+  hi2s3.Init.AudioFreq = I2S_AUDIOFREQ_96K;
   hi2s3.Init.CPOL = I2S_CPOL_LOW;
   hi2s3.Init.ClockSource = I2S_CLOCK_PLL;
   hi2s3.Init.FullDuplexMode = I2S_FULLDUPLEXMODE_DISABLE;
@@ -79,13 +79,13 @@ void HAL_I2S_MspInit(I2S_HandleTypeDef* i2sHandle)
   /* USER CODE END SPI2_MspInit 0 */
     /* I2S2 clock enable */
     __HAL_RCC_SPI2_CLK_ENABLE();
-  
+
     __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
-    /**I2S2 GPIO Configuration    
+    /**I2S2 GPIO Configuration
     PC3     ------> I2S2_SD
     PB10     ------> I2S2_CK
-    PB12     ------> I2S2_WS 
+    PB12     ------> I2S2_WS
     */
     GPIO_InitStruct.Pin = PDM_OUT_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -111,7 +111,7 @@ void HAL_I2S_MspInit(I2S_HandleTypeDef* i2sHandle)
     hdma_spi2_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
     hdma_spi2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
     hdma_spi2_rx.Init.Mode = DMA_CIRCULAR;
-    hdma_spi2_rx.Init.Priority = DMA_PRIORITY_HIGH;
+    hdma_spi2_rx.Init.Priority = DMA_PRIORITY_MEDIUM;
     hdma_spi2_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_spi2_rx) != HAL_OK)
     {
@@ -120,9 +120,6 @@ void HAL_I2S_MspInit(I2S_HandleTypeDef* i2sHandle)
 
     __HAL_LINKDMA(i2sHandle,hdmarx,hdma_spi2_rx);
 
-    /* I2S2 interrupt Init */
-    HAL_NVIC_SetPriority(SPI2_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(SPI2_IRQn);
   /* USER CODE BEGIN SPI2_MspInit 1 */
 
   /* USER CODE END SPI2_MspInit 1 */
@@ -134,14 +131,14 @@ void HAL_I2S_MspInit(I2S_HandleTypeDef* i2sHandle)
   /* USER CODE END SPI3_MspInit 0 */
     /* I2S3 clock enable */
     __HAL_RCC_SPI3_CLK_ENABLE();
-  
+
     __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOC_CLK_ENABLE();
-    /**I2S3 GPIO Configuration    
+    /**I2S3 GPIO Configuration
     PA4     ------> I2S3_WS
     PC7     ------> I2S3_MCK
     PC10     ------> I2S3_CK
-    PC12     ------> I2S3_SD 
+    PC12     ------> I2S3_SD
     */
     GPIO_InitStruct.Pin = I2S3_WS_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -166,8 +163,8 @@ void HAL_I2S_MspInit(I2S_HandleTypeDef* i2sHandle)
     hdma_spi3_tx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_spi3_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
     hdma_spi3_tx.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
-    hdma_spi3_tx.Init.Mode = DMA_NORMAL;
-    hdma_spi3_tx.Init.Priority = DMA_PRIORITY_HIGH;
+    hdma_spi3_tx.Init.Mode = DMA_CIRCULAR;
+    hdma_spi3_tx.Init.Priority = DMA_PRIORITY_MEDIUM;
     hdma_spi3_tx.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
     hdma_spi3_tx.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
     hdma_spi3_tx.Init.MemBurst = DMA_MBURST_SINGLE;
@@ -198,11 +195,11 @@ void HAL_I2S_MspDeInit(I2S_HandleTypeDef* i2sHandle)
   /* USER CODE END SPI2_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_SPI2_CLK_DISABLE();
-  
-    /**I2S2 GPIO Configuration    
+
+    /**I2S2 GPIO Configuration
     PC3     ------> I2S2_SD
     PB10     ------> I2S2_CK
-    PB12     ------> I2S2_WS 
+    PB12     ------> I2S2_WS
     */
     HAL_GPIO_DeInit(PDM_OUT_GPIO_Port, PDM_OUT_Pin);
 
@@ -210,9 +207,6 @@ void HAL_I2S_MspDeInit(I2S_HandleTypeDef* i2sHandle)
 
     /* I2S2 DMA DeInit */
     HAL_DMA_DeInit(i2sHandle->hdmarx);
-
-    /* I2S2 interrupt Deinit */
-    HAL_NVIC_DisableIRQ(SPI2_IRQn);
   /* USER CODE BEGIN SPI2_MspDeInit 1 */
 
   /* USER CODE END SPI2_MspDeInit 1 */
@@ -224,12 +218,12 @@ void HAL_I2S_MspDeInit(I2S_HandleTypeDef* i2sHandle)
   /* USER CODE END SPI3_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_SPI3_CLK_DISABLE();
-  
-    /**I2S3 GPIO Configuration    
+
+    /**I2S3 GPIO Configuration
     PA4     ------> I2S3_WS
     PC7     ------> I2S3_MCK
     PC10     ------> I2S3_CK
-    PC12     ------> I2S3_SD 
+    PC12     ------> I2S3_SD
     */
     HAL_GPIO_DeInit(I2S3_WS_GPIO_Port, I2S3_WS_Pin);
 
@@ -244,7 +238,7 @@ void HAL_I2S_MspDeInit(I2S_HandleTypeDef* i2sHandle)
 
   /* USER CODE END SPI3_MspDeInit 1 */
   }
-} 
+}
 
 /* USER CODE BEGIN 1 */
 

@@ -21,7 +21,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_audio_if.h"
-#include "pcm_buffer_pool.h"
+#include "app_main.h"
 #include "i2s.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -40,7 +40,7 @@ static int8_t Audio_CommandMgr(uint8_t cmd);
 
 /* Private variables ---------------------------------------------------------*/
 extern USBD_HandleTypeDef hUsbDeviceFS;
-USBD_AUDIO_ItfTypeDef USBD_AUDIO_fops = {
+USBD_AUDIO_ItfTypeDef USBD_AUDIO_fops_FS = {
   Audio_Init,
   Audio_DeInit,
   Audio_Record,
@@ -96,8 +96,8 @@ static int8_t Audio_DeInit(uint32_t options)
 */
 static int8_t Audio_Record(void)
 {
-	HAL_I2S_Receive_DMA(&hi2s2, PDM_Get_Buffer(), AUDIO_IN_PCM_SAMPLES_IN_MS*AUDIO_IN_PDM_DECIMATION_FACTOR/16);
-	return USBD_OK;
+ HAL_I2S_Receive_DMA(&hi2s2, PDM_Buffer, AUDIO_IN_PDM_BUFFER_SIZE);
+ return USBD_OK;
 }
 
 /**

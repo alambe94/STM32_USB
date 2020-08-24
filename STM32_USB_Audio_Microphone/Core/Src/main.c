@@ -17,7 +17,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "crc.h"
@@ -33,7 +32,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "usbd_audio_if.h"
-#include "pcm_buffer_pool.h"
 #include "math.h"
 /* USER CODE END Includes */
 
@@ -54,8 +52,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-int16_t Sine_Wave[48];
-extern uint8_t PDM_Ready_Flag;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -108,18 +105,12 @@ int main(void)
   MX_PDM2PCM_Init();
   /* USER CODE BEGIN 2 */
 
-	for(uint16_t i=0; i<48; i++)
-	{
-		Sine_Wave[i] =  0xFFFF*sinf(i*2*3.1416f*1000.0f/48000.0f)/2;
-	}
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  Check_PDM();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -137,11 +128,12 @@ void SystemClock_Config(void)
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
-  /** Configure the main internal regulator output voltage 
+  /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
@@ -155,7 +147,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -169,8 +161,8 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_I2S;
-  PeriphClkInitStruct.PLLI2S.PLLI2SN = 192;
-  PeriphClkInitStruct.PLLI2S.PLLI2SR = 2;
+  PeriphClkInitStruct.PLLI2S.PLLI2SN = 393;
+  PeriphClkInitStruct.PLLI2S.PLLI2SR = 4;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -178,35 +170,7 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
-{
-	if(hi2s == &hi2s3)
-	{
 
-	}
-}
-void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
-{
-	if(hi2s == &hi2s3)
-	{
-
-	}
-}
-
-void HAL_I2S_RxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
-{
-	if(hi2s == &hi2s2)
-	{
-
-	}
-}
-void HAL_I2S_RxCpltCallback(I2S_HandleTypeDef *hi2s)
-{
-	if(hi2s == &hi2s2)
-	{
-		PDM_Ready_Flag = 1;
-	}
-}
 /* USER CODE END 4 */
 
 /**
@@ -230,7 +194,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

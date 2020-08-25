@@ -104,7 +104,8 @@ int main(void)
   MX_CRC_Init();
   MX_PDM2PCM_Init();
   /* USER CODE BEGIN 2 */
-
+  extern void App_Main(void);
+  App_Main();
   /* USER CODE END 2 */
 
   /* Infinite loop */

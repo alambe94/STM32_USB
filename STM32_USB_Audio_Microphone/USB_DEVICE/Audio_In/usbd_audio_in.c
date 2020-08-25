@@ -358,7 +358,7 @@ static uint8_t *USBD_AUDIO_GetCfgDesc(uint16_t *length)
 static uint8_t USBD_AUDIO_DataIn(USBD_HandleTypeDef *pdev,
                                  uint8_t epnum)
 {
-  static uint16_t samples[AUDIO_IN_PCM_SAMPLES_IN_MS];
+  static uint16_t samples[50];
 
   if (epnum == (AUDIO_IN_EP & 0x7F))
   {
@@ -370,22 +370,12 @@ static uint8_t USBD_AUDIO_DataIn(USBD_HandleTypeDef *pdev,
       ((USBD_AUDIO_ItfTypeDef *)pdev->pUserData)->Record();
     }
 
-    if (PCM_Get_Count_USB() > (AUDIO_IN_PCM_BUFFER_SIZE - 72))
-    {
-      PCM_Read_Index_USB++;
-    }
-
-    if (PCM_Get_Count_USB() < 72)
-    {
-      PCM_Read_Index_USB--;
-    }
-
     if (PCM_Get_Count_USB() > AUDIO_IN_PCM_SAMPLES_IN_MS)
     {
       for (uint32_t i = 0; i < AUDIO_IN_PCM_SAMPLES_IN_MS; i++)
       {
         samples[i] = PCM_Buffer[PCM_Read_Index_USB++];
-        if (PCM_Read_Index_USB == AUDIO_IN_PCM_BUFFER_SIZE)
+        if (PCM_Read_Index_USB >= AUDIO_IN_PCM_BUFFER_SIZE)
         {
           PCM_Read_Index_USB = 0;
         }
@@ -398,8 +388,21 @@ static uint8_t USBD_AUDIO_DataIn(USBD_HandleTypeDef *pdev,
     else
     {
       USBD_LL_Transmit(pdev, AUDIO_IN_EP,
-                       IsocInBuffDummy,
+                       (uint8_t *)Sine_Wave,
                        AUDIO_IN_PCM_SAMPLES_IN_MS * 2);
+    }
+
+//    if (PCM_Get_Count_USB() > (AUDIO_IN_PCM_BUFFER_SIZE * 0.9))
+//    {
+//      PCM_Read_Index_USB++;
+//    }
+
+    if (PCM_Get_Count_USB() < (AUDIO_IN_PCM_SAMPLES_IN_MS * 1.5))
+    {
+      if (PCM_Read_Index_USB > 0)
+      {
+        PCM_Read_Index_USB--;
+      }
     }
   }
 

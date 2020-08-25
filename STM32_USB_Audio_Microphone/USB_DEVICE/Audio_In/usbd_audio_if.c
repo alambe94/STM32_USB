@@ -96,8 +96,8 @@ static int8_t Audio_DeInit(uint32_t options)
 */
 static int8_t Audio_Record(void)
 {
- HAL_I2S_Receive_DMA(&hi2s2, PDM_Buffer, AUDIO_IN_PDM_BUFFER_SIZE);
- return USBD_OK;
+	HAL_I2S_Receive_DMA(&hi2s2, PDM_Buffer, AUDIO_IN_PDM_BUFFER_SIZE);
+	return USBD_OK;
 }
 
 /**
